@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <!--[if IE]><script type="text/javascript" src="javascripts/excanvas.js"></script><![endif]-->
+<script type="text/javascript" src="javascripts/SurfacePlot.js"></script>
+<script type="text/javascript" src="javascripts/ColourGradient.js"></script>
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">  
+google.load("visualization", "1");
+google.setOnLoadCallback(setUp);
+               
+function setUp() {
+	var numRows = 45.0;
+	var numCols = 45;
+                        
+	var tooltipStrings = new Array();
+	var data = new google.visualization.DataTable();
+                        
+	for (var i = 0; i < numCols; i++) data.addColumn('number', 'col'+i);
+                        
+	data.addRows(numRows);
+	var d = 360 / numRows;
+	var idx = 0;
+                        
+	for (var i = 0; i < numRows; i++) {
+		for (var j = 0; j < numCols; j++) {
+			//var x = i - numRows/2;
+			//var y = j - numCols/2;
+			//var value = (Math.cos(i * d * Math.PI / 180.0) * Math.cos(j * d * Math.PI / 180.0));
+			//value = (Math.sqrt(x*x+y*y)+5*Math.cos(Math.sqrt((x*x+y*y) * d * Math.PI / 180.0)))/15.0
+			var scale = 0.1;
+			var error = 0.1;
+			var x = i * scale, y = j * scale;
+			
+			//var value = (Math.cos(x) * Math.cos(y));
+      var value = Math.cos(x) + Math.sin(y)
+      //var value = x*x + y*y;
+      //if(Math.abs(value-1) >= error) continue;
+                                
+			data.setValue(i, j, value*value*scale);
+                                
+			tooltipStrings[idx] = "x =" + x + ", y =" + y + ", f(x,y) = " + value;
+			idx++;
+		}
+	}
+        
+	surfacePlot = new greg.ross.visualisation.SurfacePlot(document.getElementById("surfacePlotDiv"));
+                        
+	// Don't fill polygons in IE. It's too slow.
+	var fillPly = true;
+                        
+	// Define a colour gradient.
+	var colour1 = {red:0, green:0, blue:200};
+	var colour2 = {red:0, green:100, blue:200};
+	var colour3 = {red:0, green:200, blue:200};
+	var colour4 = {red:0, green:200, blue:100};
+	var colour5 = {red:0, green:200, blue:0};
+	var colour6 = {red:100, green:200, blue:0};
+	var colour7 = {red:200, green:200, blue:0};
+	var colour8 = {red:200, green:100, blue:0};
+	var colour9 = {red:200, green:0, blue:0};
+	var colours = [colour1, colour2, colour3, colour4, colour5, colour6, colour7, colour8, colour9];
+                        
+	// Axis labels.
+	var xAxisHeader = "X";
+	var yAxisHeader = "Y";
+	var zAxisHeader = "f(x,y)";
+                        
+	var options = {xPos: 0, yPos: 0, width: 1000, height: 600, colourGradient: colours, fillPolygons: fillPly,
+			tooltips: tooltipStrings, xTitle: xAxisHeader, yTitle: yAxisHeader, zTitle: zAxisHeader, restrictXRotation: false};
+                        
+	surfacePlot.draw(data, options);
+}                        
+</script>
+</head>
+<body>
+<div class="container">
+	<h3 class="text-center">Rigel - Plotting and Analysis</h3>
+	<%=yield%>
+</div>
+</body>
+</html>
